@@ -3,10 +3,11 @@ package lazyexe
 import (
 	"io/ioutil"
 	"os"
+	"runtime"
 	"sync"
 )
 
-const prefix = "lazyexe-"
+var prefix = "lazyexe-"
 
 type LazyExe struct {
 	mu      sync.Mutex
@@ -34,6 +35,9 @@ func (le *LazyExe) Path() (string, error) {
 	}
 
 	var err error
+	if runtime.GOOS == "windows" {
+		prefix += "*.exe"
+	}
 	le.tmpFile, err = ioutil.TempFile(os.TempDir(), prefix)
 	if err != nil {
 		return "", err
